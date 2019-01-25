@@ -1,25 +1,46 @@
-"use strict";
+'use strict';
 
-const mongoose = require('mongoose'),
-        Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const mongoosePaginate = require('mongoose-paginate');
 
 mongoosePaginate.paginate.options = {
-    limit: 3 // Records on each page
+  limit: 3, // Records on each page
 };
 
 const PetSchema = new Schema({
-    name            : { type: String, required: true }
-  , species         : { type: String }
-  , birthday        : { type: Date }
-  , picUrl          : { type: String }
-  , picUrlSq        : { type: String }
-  , favoriteFood    : { type: String }
-  , description     : { type: String }
-},
-{
-  timestamps: true
+  name: {
+    type: String,
+    required: true,
+  },
+  species: {
+    type: String,
+    required: true,
+  },
+  birthday: {
+    type: Date,
+    required: true,
+  },
+  picUrl: {
+    type: String,
+    required: true,
+  },
+  picUrlSq: {
+    type: String,
+    required: true,
+  },
+  favoriteFood: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+    minlength: 140,
+  },
+}, {
+  timestamps: true,
 });
 
 PetSchema.plugin(mongoosePaginate);
