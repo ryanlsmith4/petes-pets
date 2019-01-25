@@ -1,7 +1,7 @@
 @media (min-width: 992px) {
     .navbar-expand-lg .navbar-collapse {
         justify-content: space-between;
-    }    
+    }
 }
 
 .navbar {
@@ -11,3 +11,4 @@
 .card {
     margin-bottom:20px;
 }
+s
