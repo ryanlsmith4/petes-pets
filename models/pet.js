@@ -30,6 +30,9 @@ const PetSchema = new Schema({
     type: String,
     required: true,
   },
+  avatarUrl: {
+    type: String,
+  },
   favoriteFood: {
     type: String,
     required: true,

@@ -72,8 +72,12 @@ typings/
 # Optional npm cache directory
 .npm
 
+# AWS
+uploads
+
 # Optional eslint cache
 .eslintcache
+.eslintrc.js
 
 # Optional REPL history
 .node_repl_history

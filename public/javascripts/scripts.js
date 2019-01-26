@@ -4,12 +4,11 @@
 if (document.querySelector('#new-pet')) {
   document.querySelector('#new-pet').addEventListener('submit', (e) => {
     e.preventDefault();
+    // Use formData to grab everything now that we have files mixed with text
+    const form = document.getElementById('new-pet')
+    const pet = new FormData(form);
 
-    let pet = {};
-    const inputs = document.querySelectorAll('.form-control');
-    for (const input of inputs) {
-      pet[input.name] = input.value;
-    }
+
     axios.post('/pets', pet)
       .then((response) => {
         window.location.replace(`/pets/${response.data.pet._id}`)
