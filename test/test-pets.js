@@ -11,6 +11,7 @@ const fido = {
     "favoriteFood": "Liver",
     "picUrl": "http://www.gpamass.com/s/img/emotionheader713297504.jpg",
     "picUrlSq": "https://www.collinsdictionary.com/images/thumb/greyhound_21701074_250.jpg",
+    "avatarUrl": "https://www.collinsdictionary.com/images/thumb/greyhound_21701074_250.jpg",
     "description": "Fido is a dog and he's a good dog who loves to play and hang out with his owners. He also likes to nap and enjoys eating dog food"
 }
 

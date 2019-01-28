@@ -7,7 +7,7 @@ if (document.querySelector('#new-pet')) {
     // Use formData to grab everything now that we have files mixed with text
     const form = document.getElementById('new-pet')
     const pet = new FormData(form);
-
+    
 
     axios.post('/pets', pet)
       .then((response) => {
@@ -16,7 +16,7 @@ if (document.querySelector('#new-pet')) {
       .catch((error) => {
         const alert = document.getElementById('alert');
         alert.classList.add('alert-warning');
-        alert.textContent = 'Oops, Something went wrong saving your pet. Please check your information and try again.';
+        alert.textContent = `Oops, Something went wrong saving your pet. Please check your information and try again. ${error}`;
         alert.style.display = 'block';
         setTimeout(() => {
           alert.style.display = 'none';

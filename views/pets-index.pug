@@ -6,7 +6,13 @@ block content
       .col-sm-4.justify-content-center
         .card
         if pet.avatarUrl
-          img.card-img-top(src="pet.avatarUrl" + '-standard.', alt="Card image cap")
+          img.card-img-top(src=pet.avatarUrl + '-standard.', alt="Card image cap")
+          .card-body
+            h4.card-title= pet.name
+            small.text-muted= pet.species
+            p.card-text= pet.description
+            .text-right
+                a.card-link(href=`/pets/${pet._id}`) View #{pet.name}
         else
           img.card-img-top(src=pet.picUrl, alt='Card image cap')
           .card-body
@@ -18,12 +24,12 @@ block content
   nav(aria-label='Page navigation example').d-flex.justify-content-center    
     ul.pagination
       if currentPage > 1
-
         li.page-item
-          if term
+          if term      
             a.page-link(href=`?term=${term}&page=${currentPage - 1}`) Previous
           else
             a.page-link(href=`?page=${currentPage - 1}`) Previous
+
 
       - var i = 1;
       while i <= pagesCount
