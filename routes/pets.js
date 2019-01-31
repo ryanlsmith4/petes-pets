@@ -30,6 +30,17 @@ const client = new Upload(process.env.S3_BUCKET, {
   }],
 });
 
+// MailGun dependencies
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+
+const auth = {
+  auth: {
+    api_key: process.env.MAILGUN_API_KEY,
+    domain: process.env.EMAIL_DOMAIN,
+  },
+};
+
 // PET ROUTES
 module.exports = (app) => {
   // INDEX PET => index.js
@@ -148,7 +159,29 @@ module.exports = (app) => {
         description: `Purchased ${pet.name}, ${pet.species}`,
         source: token,
       }).then((chg) => {
-        res.redirect(`/pets/${req.params.id}`);
+        const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+        const user = {
+          email: req.body.stripeEmail,
+          amount: chg.amount / 100,
+          petName: pet.name,
+        };
+        nodemailerMailgun.sendMail({
+          from: 'no-reply@example.com',
+          to: user.email,
+          subject: 'Pet Purchased',
+          template: {
+            name: 'email.handlebars',
+            engine: 'handlebars',
+            context: user,
+          },
+        }).then((info) => {
+          console.log(`Response: ${ info}`);
+          res.redirect(`/pets/${req.params.id}`);
+        }).catch((err) => {
+          console.log('Error: ' + err);
+          res.redirect(`/pets/${req.params.id}`);
+
+        });
       });
     })
     .catch((err) => {

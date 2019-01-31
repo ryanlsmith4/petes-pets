@@ -9,7 +9,8 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
+
 
 const app = express();
 
@@ -45,6 +46,14 @@ app.use((req, res, next) => {
   err.status = 404;
   next(err);
 });
+// MailGun declaration
+// const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+// const user = {
+//   email: 'ryan.l.smith4@gmail.com',
+//   name: 'Ryan',
+//   age: '25',
+// };
+
 
 
 // error handler
