@@ -1,11 +1,28 @@
 // Upload TO AWS S3
 const multer = require('multer');
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({
+  dest: 'uploads/'
+});
 
 const Upload = require('s3-uploader');
 // MODELS
 const Pet = require('../models/pet');
+
+// MailGun dependencies
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+// for access to keys
+const auth = {
+  auth: {
+    api_key: process.env.MAILGUN_API_KEY,
+    domain: process.env.EMAIL_DOMAIN,
+  },
+};
+
+// Nodemailer transport import
+const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
 
 const client = new Upload(process.env.S3_BUCKET, {
   aws: {
@@ -30,16 +47,6 @@ const client = new Upload(process.env.S3_BUCKET, {
   }],
 });
 
-// MailGun dependencies
-const nodemailer = require('nodemailer');
-const mg = require('nodemailer-mailgun-transport');
-
-const auth = {
-  auth: {
-    api_key: process.env.MAILGUN_API_KEY,
-    domain: process.env.EMAIL_DOMAIN,
-  },
-};
 
 // PET ROUTES
 module.exports = (app) => {
@@ -47,7 +54,11 @@ module.exports = (app) => {
 
   // NEW PET
   app.get('/pets/new', (req, res) => {
-    res.render('pets-new');
+    if (req.header('content-type') == 'application/json') {
+      return res.json('Get New Pet').status(200);
+    } else{
+      res.render('pets-new');
+    }
   });
 
   // CREATE PET
@@ -56,8 +67,11 @@ module.exports = (app) => {
     pet.save((err) => {
       if (req.file) {
         client.upload(req.file.path, {}, (err, versions, meta) => {
-          if (err) { return res.status(400).send({ err: err }) };
-
+          if (err) {
+            return res.status(400).send({
+              err: err
+            })
+          };
           versions.forEach((image) => {
             const urlArray = image.url.split('-');
             urlArray.pop();
@@ -65,11 +79,22 @@ module.exports = (app) => {
             pet.avatarUrl = url;
             pet.save();
           });
-
-          res.send({ pet: pet });
+          if (req.header('content-type') == 'application/json') {
+              res.json({ pet: pet })
+          }else {
+            res.send({
+              pet: pet
+            });
+          }
         });
       } else {
-        res.send({ pet: pet });
+        if (req.header('content-type') == 'application/json') {
+          res.json({ pet:pet });
+        }else {
+          res.send({
+            pet: pet
+          });
+        }
       }
     });
   });
@@ -77,6 +102,9 @@ module.exports = (app) => {
   // SHOW PET
   app.get('/pets/:id', (req, res) => {
     Pet.findById(req.params.id).exec((err, pet) => {
+      if (req.header('content-type') == 'application/json') {
+        return res.json({ pet: pet });l
+      }
       res.render('pets-show', {
         pet: pet,
       });
@@ -86,9 +114,15 @@ module.exports = (app) => {
   // EDIT PET
   app.get('/pets/:id/edit', (req, res) => {
     Pet.findById(req.params.id).exec((err, pet) => {
-      res.render('pets-edit', {
-        pet: pet
-      });
+        if (req.header('content-type') == 'application/json') {
+          return res.json({ pet: pet });
+        } else {
+          console.log(pet);
+          res.render('pets-edit', {
+            pet: pet
+          });
+        }
+
     });
   });
 
@@ -97,11 +131,13 @@ module.exports = (app) => {
     console.log("here");
     Pet.findByIdAndUpdate(req.params.id, req.body)
       .then((pet) => {
-        console.log("ACTUALLY HERE");
-        res.redirect(`/pets/${pet._id}`)
+        if (req.header('content-type') == 'application/json') {
+          return res.json('Updated')
+        } else {
+          res.redirect(`/pets/${pet._id}`);
+        }
       })
       .catch((err) => {
-        console.log('here in the catch');
         console.log(err);
         // Handle Errors
       });
@@ -110,28 +146,48 @@ module.exports = (app) => {
   // DELETE PET
   app.delete('/pets/:id', (req, res) => {
     Pet.findByIdAndRemove(req.params.id).exec((err, pet) => {
-      return res.redirect('/');
+      if (req.header('content-type') == 'application/json') {
+        return res.json('Deleted').status(200);
+      } else {
+        return res.redirect('/');
+        console.log('deleted');
+      }
+
     });
   });
 
   // SEARCH PET
   app.get('/search', (req, res) => {
-    Pet.find(
-      { $text: { $search: req.query.term } },
-      { score: { $meta: 'textScore' } },
-    )
-      .sort({ score: { $meta: 'textScore' } })
+    Pet.find({
+        $text: {
+          $search: req.query.term
+        }
+      }, {
+        score: {
+          $meta: 'textScore'
+        }
+      }, )
+      .sort({
+        score: {
+          $meta: 'textScore'
+        }
+      })
       .limit(20)
       .exec((err, pets) => {
-        if (err) { return res.status(400).send(err) }
+        if (err) {
+          return res.status(400).send(err)
+        }
 
         if (req.header('Content-Type') === 'application/json') {
-          return res.json({ pets: pets });
+          return res.json({
+            pets: pets,
+            term: req.query.term,
+          });
         } else {
           return res.render('pets-index', {
             pets: pets,
             term: req.query.term
-        });
+          });
         }
       });
   });
@@ -149,41 +205,44 @@ module.exports = (app) => {
     const token = req.body.stripeToken; // Using Express
 
     Pet.findById(req.body.petId).then((pet) => {
-      const charge = stripe.charges.create({
-        amount: pet.price * 100,
-        currency: 'usd',
-        description: `Purchased ${pet.name}, ${pet.species}`,
-        source: token,
-      }).then((chg) => {
-        const nodemailerMailgun = nodemailer.createTransport(mg(auth));
-        const user = {
-          email: req.body.stripeEmail,
-          amount: chg.amount / 100,
-          petName: pet.name,
-        };
-        nodemailerMailgun.sendMail({
-          from: 'no-reply@example.com',
-          to: user.email,
-          subject: 'Pet Purchased',
-          template: {
-            name: 'email.handlebars',
-            engine: 'handlebars',
-            context: user,
-          },
-        }).then((info) => {
-          console.log(`Response: ${ info}`);
-          res.redirect(`/pets/${req.params.id}`);
-        }).catch((err) => {
-          console.log('Error: ' + err);
-          res.redirect(`/pets/${req.params.id}`);
+        const charge = stripe.charges.create({
+          amount: pet.price * 100,
+          currency: 'usd',
+          description: `Purchased ${pet.name}, ${pet.species}`,
+          source: token,
+        }).then((chg) => {
+          const user = {
+            email: req.body.stripeEmail,
+            amount: chg.amount / 100,
+            petName: pet.name,
+          };
+          nodemailerMailgun.sendMail({
+            from: 'no-reply@example.com',
+            to: user.email,
+            subject: 'Pet Purchased',
+            template: {
+              name: 'email.handlebars',
+              engine: 'handlebars',
+              context: user,
+            },
+          }).then((info) => {
+            console.log(`Response: ${ info}`);
+            if (req.header('content-type') == 'application/json') {
+              return res.json({})
+            } else {
+              res.redirect(`/pets/${req.params.id}`);
+            }
+          }).catch((err) => {
+            console.log('Error: ' + err);
+            res.redirect(`/pets/${req.params.id}`);
 
+          });
         });
-      });
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         console.log('Error: ' + err);
       });
   });
 
-// Closing module exports
+  // Closing module exports
 };

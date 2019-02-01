@@ -7,10 +7,15 @@ if (document.querySelector('#new-pet')) {
     // Use formData to grab everything now that we have files mixed with text
     const form = document.getElementById('new-pet')
     const pet = new FormData(form);
-    
 
-    axios.post('/pets', pet)
+
+    axios.post('/pets', pet, {
+      headers: {
+        'Content-Type': 'multipart/form-data;',
+      }
+    })
       .then((response) => {
+        console.log(`here: ${response.data.pet._id}`);
         window.location.replace(`/pets/${response.data.pet._id}`)
       })
       .catch((error) => {

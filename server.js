@@ -46,15 +46,6 @@ app.use((req, res, next) => {
   err.status = 404;
   next(err);
 });
-// MailGun declaration
-// const nodemailerMailgun = nodemailer.createTransport(mg(auth));
-// const user = {
-//   email: 'ryan.l.smith4@gmail.com',
-//   name: 'Ryan',
-//   age: '25',
-// };
-
-
 
 // error handler
 app.use((err, req, res, next) => {

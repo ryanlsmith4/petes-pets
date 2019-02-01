@@ -7,7 +7,11 @@ module.exports = (app) => {
     // Pet.find().exec((err, pets)
     Pet.paginate().then((results) => {
       // console.log(results);
-      res.render('pets-index', { pets: results.docs, pagesCount: results.pages, currentPage: page });
+      if (req.header('content-type') == 'application/json') {
+        return res.json({ pets: results.docs, pagesCount: results.pages, currentPage: page });
+      } else {
+        res.render('pets-index', { pets: results.docs, pagesCount: results.pages, currentPage: page });
+      }
     });
   });
 };
