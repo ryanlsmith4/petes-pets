@@ -76,7 +76,7 @@ module.exports = (app) => {
             const urlArray = image.url.split('-');
             urlArray.pop();
             const url = urlArray.join('-');
-            pet.avatarUrl = url;
+            pet.avatar = url;
             pet.save();
           });
           if (req.header('content-type') == 'application/json') {
@@ -217,7 +217,7 @@ module.exports = (app) => {
             petName: pet.name,
           };
           nodemailerMailgun.sendMail({
-            from: 'no-reply@example.com',
+            from: 'no-reply@petespetstore.com',
             to: user.email,
             subject: 'Pet Purchased',
             template: {
