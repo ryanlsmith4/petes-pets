@@ -29,7 +29,7 @@ app.set('view engine', 'pug');
 app.use(methodOverride('_method'));
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 // morgan logger, this logs the status on the command line of the request
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
