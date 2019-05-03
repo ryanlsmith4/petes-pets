@@ -5,6 +5,7 @@ services:
     image: mongo
     volumes:
       - ./data:/data/db
+      - ./newdata:/othernewdata/database
     ports:
       - "27017:27017"
 
@@ -23,3 +24,4 @@ services:
 
 volumes:
   mongo_data:
+  local_data:

@@ -2,7 +2,6 @@ if (!process.env.PORT) {
   require('dotenv').config()
   process.env.NODE_ENV = "dev"
 }
-
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
@@ -19,8 +18,14 @@ app.locals.PUBLIC_STRIPE_API_KEY = process.env.PUBLIC_STRIPE_API_KEY;
 
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo/petes-pets');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/petes-pets');
 
+// const Sentry = require('@sentry/node');
+
+
+// Sentry.init({
+//   release: 'petes-pets'
+//    dsn: '' });
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
