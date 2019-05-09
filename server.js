@@ -18,7 +18,7 @@ app.locals.PUBLIC_STRIPE_API_KEY = process.env.PUBLIC_STRIPE_API_KEY;
 
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/petes-pets');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://mongo/petes-pets');
 
 // const Sentry = require('@sentry/node');
 
