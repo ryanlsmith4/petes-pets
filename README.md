@@ -1,26 +1,48 @@
-# Pete's Pet Emporium!
+# Ryans Puppy mill we got cats too!
 
-This is the starter project of the Pete's Pet tutorial.
+## Getting Started 
+to get this repo up and running on your host all you will have to do is 
+1. add dependencies in .env-sample or these
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+S3_REGION=
+S3_BUCKET=
+PUBLIC_STRIPE_API_KEY=
+PRIVATE_STRIPE_API_KEY=
+MAILGUN_API_KEY=
+EMAIL_DOMAIN=
+DSN=
+
+2. go to directory where project is on host.
+
+3. have docker and docker-compose installed on your host 
+
+4. simpy type ```docker-compose up```
+
+5. There ya go! 
 
 ## Tasks
+[x] Dockerrize
+[x] Digital ocean hosting
+
 
 ### Simple Search & Pagination
-Add a search bar in the navbar to search pets. Paginate the results.
+[x] Add a search bar in the navbar to search pets. Paginate the results.
 
 ### Validations
-Add validations to protect against unsanitary data getting into your db.
+[x] Add validations to protect against unsanitary data getting into your db.
 
 ### Upload Images
-Upload pictures of pets from new and edit forms
+[x] Upload pictures of pets from new and edit forms
 
 ### Payment Gateways
-Buy pets using Stripe.
+[x] Buy pets using Stripe.
 
 ### Send Emails
-Send an email when a pet is purchased.
+[x] Send an email when a pet is purchased.
 
 ### Full Text Search
-Fuzzy and full-text search on multiple criteria
+[x] Fuzzy and full-text search on multiple criteria
 
 ### Responding to JSON
-Make your project into a full API
+[x] Make your project into a full API
