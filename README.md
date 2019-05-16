@@ -17,7 +17,7 @@ DSN=
 
 3. have docker and docker-compose installed on your host 
 
-4. simpy type ```docker-compose up```
+4. in your terminal in the correct directory simpy type ```docker-compose up```
 
 5. There ya go! 
 
